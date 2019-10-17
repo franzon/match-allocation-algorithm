@@ -188,7 +188,7 @@ def mutation(population, mutation_rate):
 # ]
 
 slots = generate_data.slots
-players = generate_data.generate_players(16)
+players = generate_data.generate_players(32)
 matchs = generate_data.generate_matchs(players)
 
 
@@ -205,7 +205,7 @@ matchs = generate_data.generate_matchs(players)
 
 population_size = 50
 iterations = 1000
-mutation_rate = 0.005
+mutation_rate = 0.01
 
 print(players)
 print('')

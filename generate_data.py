@@ -19,10 +19,10 @@ slots = [
     {"id": "7B", "description": "Dia  7 - Quadra 2"},
     {"id": "8A", "description": "Dia  8 - Quadra 1"},
     {"id": "8B", "description": "Dia  8 - Quadra 2"},
-    # {"id": "9A", "description": "Dia  9 - Quadra 1"},
-    # {"id": "9B", "description": "Dia  9 - Quadra 2"},
-    # {"id": "10A", "description": "Dia  10 - Quadra 1"},
-    # {"id": "10B", "description": "Dia  10 - Quadra 2"},
+    {"id": "9A", "description": "Dia  9 - Quadra 1"},
+    {"id": "9B", "description": "Dia  9 - Quadra 2"},
+    {"id": "10A", "description": "Dia  10 - Quadra 1"},
+    {"id": "10B", "description": "Dia  10 - Quadra 2"},
 ]
 
 
