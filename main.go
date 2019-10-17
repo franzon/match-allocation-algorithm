@@ -374,7 +374,7 @@ func main() {
 
 	// Instantiate a GA with a GAConfig
 
-	gaConfig := eaopt.GAConfig{NPops: 100, PopSize: 50, HofSize: 1, NGenerations: 300, ParallelEval: true, Model: eaopt.ModGenerational{
+	gaConfig := eaopt.GAConfig{NPops: 50, PopSize: 50, HofSize: 1, NGenerations: 300, ParallelEval: true, Model: eaopt.ModGenerational{
 		Selector: eaopt.SelTournament{
 			NContestants: 3,
 		},
@@ -403,7 +403,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Melhor solução %2.2f (%d/%d) de acertos", (1.0-ga.HallOfFame[0].Fitness)*100, int((1.0-ga.HallOfFame[0].Fitness)*float64(len(matchs))), len(matchs))
+	fmt.Printf("Melhor solução %2.2f (%d/%d) de acertos\n", (1.0-ga.HallOfFame[0].Fitness)*100, int((1.0-ga.HallOfFame[0].Fitness)*float64(len(matchs))), len(matchs))
 	fmt.Println("Tempo total (segundos): ", time.Now().Sub(first).Seconds())
 
 }
