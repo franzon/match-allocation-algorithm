@@ -1,5 +1,6 @@
 import random
 import generate_data
+import time
 
 
 def init_population(population_size, num_slots, matchs):
@@ -188,23 +189,152 @@ def mutation(population, mutation_rate):
 # ]
 
 slots = generate_data.slots
-players = generate_data.generate_players(32)
-matchs = generate_data.generate_matchs(players)
+# players = generate_data.generate_players(32)
+# matchs = generate_data.generate_matchs(players)
 
+players = [{
+    'id': 0,
+    'name': 'Tesha',
+    'able_slots': ['1A', '1B', '2A', '6A', '8A', '9B', '10A', '10B']
+}, {
+    'id': 1,
+    'name': 'Robert',
+    'able_slots': ['4B', '6B', '7A', '7B', '8B', '9A', '9B', '10A']
+}, {
+    'id': 2,
+    'name': 'Sara',
+    'able_slots': ['5B', '6B', '7A', '8B', '9B']
+}, {
+    'id': 3,
+    'name': 'Thomas',
+    'able_slots': ['2B', '3A', '4A', '4B', '6B', '7B', '8A']
+}, {
+    'id': 4,
+    'name': 'Charlie',
+    'able_slots': ['1A', '1B', '3A', '5A', '6B', '7A', '7B', '9A']
+}, {
+    'id': 5,
+    'name': 'Terry',
+    'able_slots': ['1A', '2B', '3B', '4B', '5A', '9B', '10A', '10B']
+}, {
+    'id': 6,
+    'name': 'Toby',
+    'able_slots': ['1B', '4B', '6A', '6B', '7A', '8A', '8B', '9B', '10B']
+}, {
+    'id': 7,
+    'name': 'Carlos',
+    'able_slots': ['3A', '3B', '4A', '5B', '9A']
+}, {
+    'id': 8,
+    'name': 'Kevin',
+    'able_slots': ['3B', '4A', '5A', '6B', '7A', '8A', '9A', '10B']
+}, {
+    'id': 9,
+    'name': 'Dan',
+    'able_slots': ['1A', '1B', '2A', '3A', '6A', '6B', '7B', '8A', '8B', '10B']
+}, {
+    'id': 10,
+    'name': 'William',
+    'able_slots': ['1A', '2A', '3A', '3B', '5A', '6A', '6B', '7A', '7B', '8B', '9A']
+}, {
+    'id': 11,
+    'name': 'Savannah',
+    'able_slots': ['1A', '3A', '5A', '6A', '8B', '9A']
+}, {
+    'id': 12,
+    'name': 'Reyes',
+    'able_slots': ['1B',
+                   '3B', '6B', '9B', '10A'
+                   ]
+}, {
+    'id': 13,
+    'name': 'Kelly',
+    'able_slots': ['1B', '2A', '3A', '4A', '6B', '7B', '9A', '10B']
+}, {
+    'id': 14,
+    'name': 'Colleen',
+    'able_slots': ['1A', '1B', '2B', '3A', '4B', '5A', '6A', '7A', '7B', '9A']
+}, {
+    'id': 15,
+    'name': 'Monica',
+    'able_slots': ['1A', '2B', '3A', '3B', '5B', '6A', '6B', '7A',
+                   '7B', '8B', '10A'
+                   ]
+}, {
+    'id': 16,
+    'name': 'Bridget',
+    'able_slots': ['2A', '3A', '3B', '4A', '5A', '6A', '6B', '8A', '9A', '10B']
+}, {
+    'id': 17,
+    'name': 'Ryan',
+    'able_slots': ['1A', '1B', '3B', '5A', '6A', '6B', '7A', '8B', '9B', '10B']
+}, {
+    'id': 18,
+    'name': 'Dale',
+    'able_slots': ['1A', '1B', '2B', '6B', '7A']
+}, {
+    'id': 19,
+    'name': 'June',
+    'able_slots': ['1A', '2A', '2B', '5A', '6A', '7A', '8B', '9B']
+}, {
+    'id': 20,
+    'name': 'Matthew',
+    'able_slots': ['1B', '2A', '2B', '4A', '8A', '8B', '9B', '10A']
+}, {
+    'id': 21,
+    'name': 'Louise',
+    'able_slots': ['1A', '2A', '2B', '4A', '5A', '5B',
+                   '6A', '10A', '10B'
+                   ]
+}, {
+    'id': 22,
+    'name': 'Lionel',
+    'able_slots': ['2A', '4A', '9B', '10A']
+}, {
+    'id': 23,
+    'name': 'Eric',
+    'able_slots': ['1B', '2B', '4A', '5A', '7B', '9B']
+}, {
+    'id': 24,
+    'name': 'Marcell',
+    'able_slots': ['1A', '1B', '4A', '5A', '6A', '7B', '8B']
+}, {
+    'id': 25,
+    'name': 'Jon',
+    'able_slots': ['1A', '1B', '2A', '3A', '4B', '7A', '7B', '8B', '9B']
+}, {
+    'id': 26,
+    'name': 'Edna',
+    'able_slots': ['1A', '1B', '2A', '3A', '3B', '5A', '5B', '7A', '7B', '8A', '9B', '10A']
+}, {
+    'id': 27,
+    'name': 'Mark',
+    'able_slots': ['1A', '5A', '7A', '10A']
+}, {
+    'id': 28,
+    'name': 'Kent',
+    'able_slots': ['4B', '5B', '8A', '8B', '9A', '10A']
+}, {
+    'id': 29,
+    'name': 'John',
+    'able_slots': ['1A', '2B', '5B', '6B', '7A', '9A',
+                   '10B'
+                   ]
+}, {
+    'id': 30,
+    'name': 'Sharon',
+    'able_slots': ['1A', '1B', '2A', '2B', '4A', '4B', '5B', '7A', '7B', '8B', '10A']
+}, {
+    'id': 31,
+    'name': 'Andrew',
+    'able_slots': ['3B', '4A', '6B', '7A', '8A', '8B', '9A']
+}]
+matchs = [{"id": 0, "player1": 24, "player2": 3}, {"id": 1, "player1": 12, "player2": 10}, {"id": 2, "player1": 19, "player2": 6}, {"id": 3, "player1": 29, "player2": 18}, {"id": 4, "player1": 4, "player2": 14}, {"id": 5, "player1": 25, "player2": 22}, {"id": 6, "player1": 8, "player2": 27}, {"id": 7, "player1": 9, "player2": 7}, {
+    "id": 8, "player1": 15, "player2": 21}, {"id": 9, "player1": 5, "player2": 26}, {"id": 10, "player1": 23, "player2": 28}, {"id": 11, "player1": 17, "player2": 13}, {"id": 12, "player1": 0, "player2": 2}, {"id": 13, "player1": 11, "player2": 20}, {"id": 14, "player1": 30, "player2": 1}, {"id": 15, "player1": 31, "player2": 16}]
 
-# não encontrou
-
-# players = [{'id': 0, 'name': 'Deborah', 'able_slots': ['1A', '2A', '3A', '4B', '6A', '6B', '7A', '8B', '9A', '9B', '10A']}, {'id': 1, 'name': 'Steve', 'able_slots': ['2B', '3A', '5A', '6A', '8A', '9A', '9B', '10B']}, {'id': 2, 'name': 'Madeline', 'able_slots': ['1A', '2B', '4A', '5B', '6B', '7B', '10A', '10B']}, {'id': 3, 'name': 'Erin', 'able_slots': ['1A', '2A', '3A', '4A', '5A', '5B', '6A', '7B', '9B']}, {'id': 4, 'name': 'Lorna', 'able_slots': ['2B', '3A', '4B', '5B', '6A', '6B', '7A', '7B', '8A', '8B', '9B', '10A']}, {'id': 5, 'name': 'Ernest', 'able_slots': ['1A', '2B', '4A', '5A', '6A', '8A', '9B', '10A', '10B']}, {'id': 6, 'name': 'Irving', 'able_slots': ['1B', '3B', '4A',
-#                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 '5A', '6B', '9A']}, {'id': 7, 'name': 'Robert', 'able_slots': ['1A', '1B', '3A', '6A', '7B', '8B']}, {'id': 8, 'name': 'Daniel', 'able_slots': ['1A', '1B', '3B', '7A', '7B', '8B', '9A', '10B']}, {'id': 9, 'name': 'Anna', 'able_slots': ['1B', '2B', '4B', '5B', '7A', '10A']}, {'id': 10, 'name': 'Lillian', 'able_slots': ['2B', '4B', '6A', '6B', '7A', '8B', '10A', '10B']}, {'id': 11, 'name': 'Edward', 'able_slots': ['2A', '2B', '5A', '6A', '6B', '9B', '10A', '10B']}, {'id': 12, 'name': 'Doris', 'able_slots':
-#                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ['3A', '4B', '5A', '7A']}, {'id': 13, 'name': 'Todd', 'able_slots': ['2B', '3B', '4A', '8A', '8B', '9A']}, {'id': 14, 'name': 'Duane', 'able_slots': ['2B', '3B', '4B', '5A', '5B', '6A', '8A', '8B', '9A', '10A', '10B']}, {'id': 15, 'name': 'Ronda', 'able_slots': ['3B', '4B', '6A', '8A', '8B', '10B']}, {'id': 16, 'name': 'Maria', 'able_slots': ['2A', '3B', '5A', '6B', '7B', '8A', '10A', '10B']}, {'id': 17, 'name': 'James',
-#                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    'able_slots': ['1A', '3B', '4A', '7A', '7B', '8A', '8B', '9A', '9B', '10A']}, {'id':
-#                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   18, 'name': 'Janet', 'able_slots': ['1A', '1B', '2A', '5B', '6A', '6B', '7A', '8A', '8B', '9A', '10A']}, {'id': 19, 'name': 'Martin', 'able_slots': ['3A', '6A', '6B', '7A', '8A', '8B', '9A', '10A']}, {'id': 20, 'name': 'Ruth', 'able_slots': ['3B', '5A', '5B', '8A']}, {'id': 21, 'name': 'Laura', 'able_slots': ['1B', '2A', '3B', '4A', '4B', '6A', '7B', '8B', '9B', '10B']}, {'id': 22, 'name': 'Terresa', 'able_slots': ['3B',
-#                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      '7A', '9A']}, {'id': 23, 'name': 'Carlos', 'able_slots': ['2A', '2B', '3B', '4A', '4B', '5A', '6A', '6B', '7B', '10A', '10B']}, {'id': 24, 'name': 'John', 'able_slots': ['1B', '3B', '6B', '8B', '9B', '10A', '10B']}, {'id': 25, 'name': 'Deborah', 'able_slots': ['1A', '1B', '3A', '7B']}, {'id': 26, 'name': 'Russell', 'able_slots': ['3B', '4A', '5A', '6A', '7B', '8A', '10A', '10B']}, {'id': 27, 'name': 'Tisha', 'able_slots': ['1A', '2B', '3A', '3B', '7B', '8A', '10B']}, {'id': 28, 'name': 'Jane', 'able_slots': ['2A', '4B', '5A', '6A', '7B', '8A', '8B', '9A', '9B']}, {'id': 29, 'name': 'James', 'able_slots': ['1B', '2B', '3B', '4A', '5A', '7B', '10A', '10B']}, {'id': 30, 'name': 'Clarence', 'able_slots': ['3B', '4B', '6A', '6B', '7A', '7B', '10B']}, {'id': 31, 'name': 'Michael', 'able_slots': ['4A', '4B', '5A', '7B', '9B']}]
-# matchs = [{'id': 0, 'player1': 2, 'player2': 29}, {'id': 1, 'player1': 10, 'player2': 23}, {'id': 2, 'player1': 1, 'player2': 31}, {'id': 3, 'player1': 5, 'player2': 22}, {'id': 4, 'player1': 15, 'player2': 30}, {'id': 5, 'player1': 24, 'player2': 18}, {'id': 6, 'player1': 17, 'player2': 4}, {'id': 7, 'player1': 13, 'player2': 8}, {'id': 8, 'player1': 26, 'player2': 3}, {'id': 9, 'player1': 21, 'player2': 7}, {'id': 10, 'player1': 16, 'player2': 25}, {'id': 11, 'player1': 28, 'player2': 12}, {'id': 12, 'player1':
-#                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   27, 'player2': 6}, {'id': 13, 'player1': 11, 'player2': 0}, {'id': 14, 'player1': 20, 'player2': 9}, {'id': 15, 'player1': 19, 'player2': 14}]
 
 population_size = 50
-iterations = 1000
+iterations = 300
 mutation_rate = 0.01
 
 print(players)
@@ -213,12 +343,14 @@ print(matchs)
 
 best = {"fitness": 0}
 
+first = time.time()
+
 pop = init_population(population_size, len(slots), matchs)
 
 for it in range(iterations):
     compute_fitness(pop, matchs, players, slots)
 
-    print('Melhor fitness: ', pop[0]["fitness"])
+    # print('Melhor fitness: ', pop[0]["fitness"])
     if pop[0]["fitness"] > best["fitness"]:
         best = pop[0]
 
@@ -228,4 +360,6 @@ for it in range(iterations):
     mutation(pop, mutation_rate)
 
 
-print('Melhor solução: ', best["genome"])
+print('Melhor solução: ', best["fitness"])
+
+print("Tempo: ", time.time()-first)

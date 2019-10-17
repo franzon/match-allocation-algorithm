@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"math/rand"
 	"os"
 	"time"
@@ -48,7 +47,7 @@ func Contains(a []string, x string) bool {
 // isn"t any error handling to do.
 func (X Genome) Evaluate() (float64, error) {
 
-	fitness := math.MaxFloat64
+	fitness := 1.0
 
 	count := 0
 
@@ -99,9 +98,13 @@ func (X Genome) Evaluate() (float64, error) {
 		if count == len(matchs)*2 {
 			fmt.Println("Solução ", X)
 			os.Exit(0)
+		} else if count == 0 {
+			fitness = 1.0
+		} else {
+
+			fitness = float64(count) / float64(len(matchs)*2)
 		}
 
-		fitness = float64(1.0 / float64(count+1.0))
 	}
 
 	return fitness, nil
@@ -367,6 +370,8 @@ func main() {
 		Match{ID: 14, Player1: players[30], Player2: players[1]},
 		Match{ID: 15, Player1: players[31], Player2: players[16]}}
 
+	first := time.Now()
+
 	// Instantiate a GA with a GAConfig
 
 	gaConfig := eaopt.GAConfig{NPops: 100, PopSize: 50, HofSize: 1, NGenerations: 300, ParallelEval: true, Model: eaopt.ModGenerational{
@@ -388,7 +393,7 @@ func main() {
 
 	// Add a custom print function to track progress
 	ga.Callback = func(ga *eaopt.GA) {
-		fmt.Printf("Best fitness at generation %d: %f\n", ga.Generations, ga.HallOfFame[0].Fitness)
+		// fmt.Printf("Best fitness at generation %d: %f\n", ga.Generations, ga.HallOfFame[0].Fitness)
 	}
 
 	// Find the minimum
@@ -398,5 +403,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("Melhor solução", ga.HallOfFame[0].Genome)
+	fmt.Printf("Melhor solução %2.2f (%d/%d) de acertos", (1.0-ga.HallOfFame[0].Fitness)*100, int((1.0-ga.HallOfFame[0].Fitness)*float64(len(matchs))), len(matchs))
+	fmt.Println("Tempo total (segundos): ", time.Now().Sub(first).Seconds())
+
 }
