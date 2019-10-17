@@ -1,216 +1,236 @@
 package main
 
-type Player struct {
-	ID           int
-	Name         string
-	AbleSlotsIds []int // índices disponíveis
-}
+import (
+	"fmt"
+	"math"
+	"math/rand"
+	"os"
+	"time"
 
-type Match struct {
-	ID        int
-	Player1Id int
-	Player2Id int
-}
+	"github.com/MaxHalford/eaopt"
+)
 
 type Slot struct {
 	ID          string
 	Description string
 }
 
-type Individual struct {
-	Genome  []int
-	Fitness float32
+type Player struct {
+	ID        int
+	Name      string
+	AbleSlots []string
 }
 
-// type Slot struct {
-// 	Id          int
-// 	Description string
-// 	Match       Match
-// }
+type Match struct {
+	ID      int
+	Player1 Player
+	Player2 Player
+}
 
-// // HasMatch Função temporária para verificar se Slot tem uma Match atribuida
-// func (slot *Slot) HasMatch() bool {
-// 	return slot.Match.Player1.Name != "" || slot.Match.Player2.Name != ""
-// }
+// A Genome contains int32s.
+type Genome []int
 
-// type Player struct {
-// 	Name        string
-// 	UnableSlots []Slot
-// }
+var slots []Slot
+var players []Player
+var matchs []Match
 
-// type Match struct {
-// 	Id      int
-// 	Player1 Player
-// 	Player2 Player
-// }
+func Contains(a []string, x string) bool {
+	for _, n := range a {
+		if x == n {
+			return true
+		}
+	}
+	return false
+}
 
-// type Individual struct {
-// 	Genome  []int
-// 	Fitness float32
-// }
+// Evaluate a Vector with the Drop-Wave function which takes two variables as
+// input and reaches a minimum of -1 in (0, 0). The function is simple so there
+// isn't any error handling to do.
+func (X Genome) Evaluate() (float64, error) {
 
-// // ComputeFitness Calcula quantas vezes as restrições foram quebradas
-// func (individual *Individual) ComputeFitness() {
-// 	constraintFailedCount := 0
+	fitness := math.MaxFloat64
 
-// 	for _, slot := range individual.Genome {
+	count := 0
 
-// 		if slot.HasMatch() {
+	for index := 0; index < len(X); index++ {
 
-// 			for _, slotConstraint := range slot.Match.Player1.UnableSlots {
-// 				if slotConstraint.Id == slot.Id {
-// 					constraintFailedCount++
-// 				}
-// 			}
+		matchId := X[index]
+		slot := slots[index]
 
-// 			for _, slotConstraint := range slot.Match.Player2.UnableSlots {
-// 				if slotConstraint.Id == slot.Id {
-// 					constraintFailedCount++
-// 				}
-// 			}
+		if matchId != -1 {
 
-// 		}
-// 	}
+			for _, match := range matchs {
+				if match.ID == matchId {
 
-// 	if constraintFailedCount == 0 {
-// 		fmt.Println("Solução encontrada!")
-// 		individual.Fitness = 1.0
-// 	} else {
-// 		individual.Fitness = float32(1 / (constraintFailedCount + 1))
-// 	}
-// }
+					if Contains(match.Player1.AbleSlots, slot.ID) {
+						count++
+					}
 
-// type Population struct {
-// 	Individuals []Individual
-// }
+					if Contains(match.Player2.AbleSlots, slot.ID) {
+						count++
+					}
 
-// // BuildPopulation Inicia população com genomas aleatórios
-// // TODO: otimizar geração para abrangir mais possibilidades
-// func BuildPopulation(size int, slots []Slot, matchs []Match) Population {
+					break
+				}
+			}
+		}
+	}
 
-// 	rand.Seed(time.Now().UTC().UnixNano())
+	withoutEmpty := make([]int, 0)
 
-// 	population := Population{Individuals: make([]Individual, 0)}
-// 	for index := 0; index < size; index++ {
+	for index := 0; index < len(X); index++ {
+		if X[index] != -1 {
+			withoutEmpty = append(withoutEmpty, X[index])
+		}
+	}
 
-// 		tmpMatchs := make([]Match, len(matchs))
-// 		copy(tmpMatchs, matchs)
+	slotMap := make(map[int]bool)
+	for index := 0; index < len(withoutEmpty); index++ {
+		slotMap[withoutEmpty[index]] = true
+	}
 
-// 		individual := Individual{Genome: slots, Fitness: 0}
+	if len(slotMap) != len(withoutEmpty) {
+		// fmt.Println("Duplic")
 
-// 		for matchIdx := 0; matchIdx < len(matchs); matchIdx++ {
+	} else if len(slotMap) != len(matchs) {
+		// fmt.Println("faltant")
+	} else {
 
-// 			pickIndex := 0
-// 			if len(tmpMatchs) > 0 {
-// 				pickIndex = rand.Intn(len(tmpMatchs))
-// 			}
+		if count == len(matchs)*2 {
+			fmt.Println("Solução ", X)
+			os.Exit(0)
+		}
 
-// 			individual.Genome[matchIdx].Match = tmpMatchs[pickIndex]
+		fitness = float64(1.0 / float64(count+1.0))
+	}
 
-// 			if len(tmpMatchs) > 1 {
-// 				tmpMatchs[len(tmpMatchs)-1], tmpMatchs[pickIndex] = tmpMatchs[pickIndex], tmpMatchs[len(tmpMatchs)-1]
-// 				tmpMatchs = tmpMatchs[:len(tmpMatchs)-1]
-// 			} else if len(tmpMatchs) == 0 {
-// 				tmpMatchs = tmpMatchs[:0]
-// 			}
-// 		}
+	return fitness, nil
+}
 
-// 		population.Individuals = append(population.Individuals, individual)
-// 	}
+// // Mutate a Vector by resampling each element from a normal distribution with
+// // probability 0.8.
+func (X Genome) Mutate(rng *rand.Rand) {
+	eaopt.MutPermuteInt(X, 1, rng)
+}
 
-// 	return population
-// }
+// Crossover a Vector with another Vector by applying uniform crossover.
+func (X Genome) Crossover(Y eaopt.Genome, rng *rand.Rand) {
+	eaopt.CrossGNXInt(X, Y.(Genome), 1, rng)
+}
 
-// // ComputeFitness Calcula o fitness
-// func (population *Population) ComputeFitness() Individual {
+// Clone a Vector to produce a new one that points to a different slice.
+func (X Genome) Clone() eaopt.Genome {
+	var Y = make(Genome, len(X))
+	copy(Y, X)
+	return Y
+}
 
-// 	// var wg sync.WaitGroup
+func RemoveIndex(s []Player, index int) []Player {
+	return append(s[:index], s[index+1:]...)
+}
 
-// 	// wg.Add(len(population.Individuals))
+func GenomeFactory(rng *rand.Rand) eaopt.Genome {
 
-// 	for index := 0; index < len(population.Individuals); index++ {
+	tmpPlayers := make([]Player, len(players))
+	copy(tmpPlayers, players)
 
-// 		// go func(i int) {
+	// i := 0
 
-// 		population.Individuals[index].ComputeFitness()
-// 		// defer wg.Done()
-// 		// }(index)
-// 	}
+	// for len(tmpPlayers) > 0 {
+	// 	rndIdx := rand.Intn((len(tmpPlayers)))
+	// 	player1 := tmpPlayers[rndIdx]
 
-// 	// wg.Wait()
+	// 	tmpPlayers = RemoveIndex(tmpPlayers, rndIdx)
 
-// 	// Ordena do maior fitness para o menor
-// 	slice.Sort(population.Individuals[:], func(i, j int) bool {
-// 		return population.Individuals[i].Fitness > population.Individuals[j].Fitness
-// 	})
+	// 	rndIdx = rand.Intn((len(tmpPlayers)))
+	// 	player2 := tmpPlayers[rndIdx]
 
-// 	return population.Individuals[0]
-// }
+	// 	tmpPlayers = RemoveIndex(tmpPlayers, rndIdx)
 
-// // SelectParents Seleciona os pais
-// func SelectParents(population Population) Population {
-// 	newPopulation := Population{Individuals: make([]Individual, 0)}
+	// 	matchs = append(matchs, Match{ID: i, Player1: player1, Player2: player2})
+	// 	i++''
+	// }
 
-// 	for index := 0; index < int(math.Ceil(float64(len(population.Individuals))/2)); index++ {
-// 		newPopulation.Individuals = append(newPopulation.Individuals, population.Individuals[index])
-// 	}
+	rndSlots := make([]int, len(slots))
 
-// 	return newPopulation
-// }
+	for index := 0; index < len(slots); index++ {
+		rndSlots[index] = -1
+	}
 
-// func prettyPrint(i interface{}) string {
-// 	s, _ := json.MarshalIndent(i, "", "\t")
-// 	return string(s)
-// }
+	for index := 0; index < len(matchs); index++ {
+		rndSlots[index] = matchs[index].ID
+	}
 
-// func main() {
+	rand.Shuffle(len(rndSlots), func(i, j int) {
+		rndSlots[i], rndSlots[j] = rndSlots[j], rndSlots[i]
+	})
 
-// 	slots := []Slot{
-// 		Slot{Id: 1, Description: "Dia 1 - Quadra 1"},
-// 		Slot{Id: 2, Description: "Dia 1 - Quadra 2"},
-// 		Slot{Id: 3, Description: "Dia 2 - Quadra 1"},
-// 		Slot{Id: 4, Description: "Dia 2 - Quadra 2"},
-// 		Slot{Id: 5, Description: "Dia 3 - Quadra 1"},
-// 		Slot{Id: 6, Description: "Dia 3 - Quadra 2"},
-// 		Slot{Id: 7, Description: "Dia 4 - Quadra 1"},
-// 		Slot{Id: 8, Description: "Dia 4 - Quadra 2"},
-// 	}
+	return Genome(rndSlots)
+}
 
-// 	// Redundante repetir o slot para o mesmo horário... O front deve tratar isso.
+func main() {
 
-// 	players := []Player{
-// 		Player{Name: "Jorge", UnableSlots: []Slot{slots[0], slots[1]}},
-// 		Player{Name: "Rafael" /*  UnableSlots: []Slot{slots[2], slots[3], slots[4], slots[5]} */},
-// 		Player{Name: "João"},
-// 		Player{Name: "Maria", UnableSlots: []Slot{slots[1]}},
-// 		Player{Name: "Pedro"},
-// 		Player{Name: "Lucas"},
-// 		Player{Name: "Dennis", UnableSlots: []Slot{slots[2]}},
-// 		Player{Name: "Larissa", UnableSlots: []Slot{slots[3]}}}
+	rand.Seed(time.Now().Unix())
 
-// 	matchs := []Match{
-// 		Match{Player1: players[0], Player2: players[1]},
-// 		Match{Player1: players[2], Player2: players[3]},
-// 		Match{Player1: players[4], Player2: players[5]},
-// 		Match{Player1: players[6], Player2: players[7]}}
+	slots = []Slot{
+		Slot{ID: "1A", Description: "Dia  1 - Quadra 1"},
+		Slot{ID: "1B", Description: "Dia  1 - Quadra 2"},
+		Slot{ID: "2A", Description: "Dia  2 - Quadra 1"},
+		Slot{ID: "2B", Description: "Dia  2 - Quadra 2"},
+		Slot{ID: "3A", Description: "Dia  3 - Quadra 1"},
+		Slot{ID: "3B", Description: "Dia  3 - Quadra 2"},
+		Slot{ID: "4A", Description: "Dia  4 - Quadra 1"},
+		Slot{ID: "4B", Description: "Dia  4 - Quadra 2"},
+		Slot{ID: "5A", Description: "Dia  5 - Quadra 1"},
+		Slot{ID: "5B", Description: "Dia  5 - Quadra 2"},
+		Slot{ID: "6A", Description: "Dia  6 - Quadra 1"},
+		Slot{ID: "6B", Description: "Dia  6 - Quadra 2"},
+		Slot{ID: "7A", Description: "Dia  7 - Quadra 1"},
+		Slot{ID: "7B", Description: "Dia  7 - Quadra 2"},
+		Slot{ID: "8A", Description: "Dia  8 - Quadra 1"},
+		Slot{ID: "8B", Description: "Dia  8 - Quadra 2"},
+	}
 
-// 	pop1 := BuildPopulation(100, slots, matchs)
+	players = []Player{
+		Player{ID: 0, Name: "Jorge", AbleSlots: []string{"1A", "1B"}},
+		Player{ID: 1, Name: "Rafael", AbleSlots: []string{"1A", "1B"}},
+		Player{ID: 2, Name: "Larissa", AbleSlots: []string{"2A"}},
+		Player{ID: 3, Name: "Dennis", AbleSlots: []string{"2A"}},
+		Player{ID: 4, Name: "João", AbleSlots: []string{"3A", "1B"}},
+		Player{ID: 5, Name: "Maria", AbleSlots: []string{"3A", "1B"}},
+		Player{ID: 6, Name: "Pedro", AbleSlots: []string{"4A", "1B"}},
+		Player{ID: 7, Name: "Lucas", AbleSlots: []string{"4A", "1B"}},
+	}
 
-// 	// fmt.Println(prettyPrint(pop1))
+	matchs = []Match{
+		Match{ID: 0, Player1: players[0], Player2: players[1]},
+		Match{ID: 1, Player1: players[2], Player2: players[3]},
+		Match{ID: 2, Player1: players[4], Player2: players[5]},
+		Match{ID: 3, Player1: players[6], Player2: players[7]},
+	}
 
-// 	pop1.ComputeFitness()
+	// Instantiate a GA with a GAConfig
+	var ga, err = eaopt.NewDefaultGAConfig().NewGA()
 
-// 	parents := SelectParents(pop1)
-// 	fmt.Print(len(parents.Individuals))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-// 	// players := []string{"Jorge", "Rafael", "João", "Maria", "Pedro", "Lucas", "Dennis", "Larissa"}
+	// Set the number of generations to run for
+	ga.NGenerations = 1000
 
-// 	// matchs := make([]Match, 0)
-// 	// matchs = append(matchs, Match{player1: "Jorge", player2: "Rafael"})
-// 	// matchs = append(matchs, Match{player1: "João", player2: "Maria"})
-// 	// matchs = append(matchs, Match{player1: "Pedro", player2: "Lucas"})
-// 	// matchs = append(matchs, Match{player1: "Dennis", player2: "Larissa"})
+	// Add a custom print function to track progress
+	ga.Callback = func(ga *eaopt.GA) {
+		fmt.Printf("Best fitness at generation %d: %f\n", ga.Generations, ga.HallOfFame[0].Fitness)
+	}
 
-// 	// slots := []string{"1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B"}
+	// Find the minimum
+	err = ga.Minimize(GenomeFactory)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-// }
+	fmt.Println("Melhor solução", ga.HallOfFame[0].Genome)
+}
