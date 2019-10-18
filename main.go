@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/MaxHalford/eaopt"
@@ -128,6 +129,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/allocate", GenerateAllocation).Methods("POST")
 
-	http.ListenAndServe(":8000", r)
+	addr := ":" + os.Getenv("PORT")
+	http.ListenAndServe(addr, r)
 
 }
