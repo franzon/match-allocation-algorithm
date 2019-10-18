@@ -10,10 +10,10 @@ import (
 
 // ResponseBody Representação da resposta
 type ResponseBody struct {
-	NFullSlots  int    `json:"n_full_slots"`
-	NHalfSlots  int    `json:"n_half_slots"`
-	NEmptySlots int    `json:"n_empty_slots"`
-	Slots       []Slot `json:"slots"`
+	NGoodSlots    int    `json:"n_full_slots"`
+	NAverageSlots int    `json:"n_average_slots"`
+	NBadSlots     int    `json:"n_bad_slots"`
+	Slots         []Slot `json:"slots"`
 }
 
 type Slot struct {
@@ -79,9 +79,9 @@ func FindMatchByID(id int, matchs []Match) (Match, error) {
 func (X Schedule) BuildResponseFromSchedule() ResponseBody {
 
 	body := ResponseBody{
-		Slots:      make([]Slot, len(X.Data.Slots)),
-		NFullSlots: 0,
-		NHalfSlots: 0,
+		Slots:         make([]Slot, len(X.Data.Slots)),
+		NGoodSlots:    0,
+		NAverageSlots: 0,
 	}
 
 	copy(body.Slots, X.Data.Slots)
@@ -103,23 +103,27 @@ func (X Schedule) BuildResponseFromSchedule() ResponseBody {
 
 			if Contains(match.Player1.AbleSlots, slot.ID) && Contains(match.Player2.AbleSlots, slot.ID) {
 
-				body.Slots[slotIndex].Status = "full"
-				body.NFullSlots++
+				body.Slots[slotIndex].Status = "good"
+				body.NGoodSlots++
 				count += 2
+
+				body.Slots[slotIndex].Match.Player1.Status = true
+
+				body.Slots[slotIndex].Match.Player2.Status = true
 
 			} else {
 
 				if Contains(match.Player1.AbleSlots, slot.ID) {
-					body.Slots[slotIndex].Status = "half"
-					body.NHalfSlots++
+					body.Slots[slotIndex].Status = "average"
+					body.NAverageSlots++
 					count++
 
 					body.Slots[slotIndex].Match.Player1.Status = true
 				}
 
 				if Contains(match.Player2.AbleSlots, slot.ID) {
-					body.Slots[slotIndex].Status = "half"
-					body.NHalfSlots++
+					body.Slots[slotIndex].Status = "average"
+					body.NAverageSlots++
 					count++
 
 					body.Slots[slotIndex].Match.Player2.Status = true
@@ -127,11 +131,11 @@ func (X Schedule) BuildResponseFromSchedule() ResponseBody {
 			}
 
 			if count == tmpCount {
-				body.Slots[slotIndex].Status = "empty"
-
-				body.NEmptySlots++
-
+				body.Slots[slotIndex].Status = "bad"
+				body.NBadSlots++
 			}
+		} else {
+			body.Slots[slotIndex].Status = "empty"
 
 		}
 	}
@@ -167,7 +171,7 @@ func (X Schedule) Evaluate() (float64, error) {
 
 	response := X.BuildResponseFromSchedule()
 
-	return -float64(response.NFullSlots*10 + response.NHalfSlots), nil
+	return -float64(response.NGoodSlots*10 + response.NAverageSlots), nil
 }
 
 // Mutate Aplica a mutação

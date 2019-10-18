@@ -47,20 +47,24 @@ func RunGeneticAlgorithm(body RequestBody) (ResponseBody, error) {
 
 	// Função de parada do algorítmo genético
 	earlyStop := func(ga *eaopt.GA) bool {
-		return ga.HallOfFame[0].Fitness == -float64(len(body.Matchs)*2)
+		return ga.HallOfFame[0].Fitness == -float64(len(body.Matchs)*10)
 	}
 
 	// Configuração do algorítmo genético
 	gaConfig := eaopt.GAConfig{
-		EarlyStop: earlyStop, NPops: 100, PopSize: 80, HofSize: 1, NGenerations: 300, ParallelEval: true, Model: eaopt.ModGenerational{
+		EarlyStop: earlyStop, NPops: 10, PopSize: 200, HofSize: 1, NGenerations: 500, ParallelEval: true, Model: eaopt.ModGenerational{
 			Selector: eaopt.SelTournament{
 				NContestants: 3,
 			},
 			MutRate:   0.5,
-			CrossRate: 0.7,
+			CrossRate: 0.1,
 		}}
 
 	var ga, err = gaConfig.NewGA()
+
+	ga.Callback = func(ga *eaopt.GA) {
+		fmt.Printf("Best fitness at generation %d: %f\n", ga.Generations, ga.HallOfFame[0].Fitness)
+	}
 
 	if err != nil {
 		fmt.Println(err)
@@ -110,10 +114,6 @@ func GenerateAllocation(w http.ResponseWriter, r *http.Request) {
 	// _ = json.NewDecoder(r.Body).Decode(&body)
 
 	// data := Schedule{Slots: body.Slots, Matchs: body.Matchs, Players: body.Players}
-
-	// // ga.Callback = func(ga *eaopt.GA) {
-	// // 	// fmt.Printf("Best fitness at generation %d: %f\n", ga.Generations, ga.HallOfFame[0].Fitness)
-	// // }
 
 	// fmt.Printf("Melhor solução: %f\n", ga.HallOfFame[0].Fitness)
 	// // fmt.Printf("Melhor solução %2.2f (%d/%d) de acertos\n", (1.0-ga.HallOfFame[0].Fitness)*100, int((1.0-ga.HallOfFame[0].Fitness)*float64(len(body.Matchs))), len(body.Matchs))
