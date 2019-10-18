@@ -2,8 +2,8 @@ import generate_data
 import json
 import pyperclip
 
-slots = generate_data.slots
-players = generate_data.generate_players(32)
+slots = generate_data.generate_slots(32)
+players = generate_data.generate_players(64, slots)
 matchs = generate_data.generate_matchs(players)
 
 x = json.dumps(

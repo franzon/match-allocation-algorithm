@@ -51,20 +51,30 @@ func RunGeneticAlgorithm(body RequestBody) (ResponseBody, error) {
 	}
 
 	// Configuração do algorítmo genético
+	// gaConfig := eaopt.GAConfig{
+	// 	EarlyStop: earlyStop, NPops: 20, PopSize: 100, HofSize: 1, NGenerations: 300, ParallelEval: true, Model: eaopt.ModGenerational{
+	// 		Selector: eaopt.SelTournament{
+	// 			NContestants: 3,
+	// 		},
+	// 		MutRate:   0.5,
+	// 		CrossRate: 0.1,
+	// 	}}
+
 	gaConfig := eaopt.GAConfig{
-		EarlyStop: earlyStop, NPops: 10, PopSize: 200, HofSize: 1, NGenerations: 500, ParallelEval: true, Model: eaopt.ModGenerational{
+		EarlyStop: earlyStop, NPops: 24, PopSize: 80, HofSize: 1, NGenerations: 300, ParallelEval: true,
+		Model: eaopt.ModGenerational{
 			Selector: eaopt.SelTournament{
 				NContestants: 3,
 			},
-			MutRate:   0.5,
-			CrossRate: 0.1,
+			MutRate:   0.4,
+			CrossRate: 0.01,
 		}}
 
 	var ga, err = gaConfig.NewGA()
 
-	ga.Callback = func(ga *eaopt.GA) {
-		fmt.Printf("Best fitness at generation %d: %f\n", ga.Generations, ga.HallOfFame[0].Fitness)
-	}
+	// ga.Callback = func(ga *eaopt.GA) {
+	// 	fmt.Printf("Best fitness at generation %d: %f\n", ga.Generations, ga.HallOfFame[0].Fitness)
+	// }
 
 	if err != nil {
 		fmt.Println(err)
@@ -109,87 +119,6 @@ func GenerateAllocation(w http.ResponseWriter, r *http.Request) {
 	response, _ := RunGeneticAlgorithm(body)
 
 	json.NewEncoder(w).Encode(response)
-
-	// var body AllocateRequestBody
-	// _ = json.NewDecoder(r.Body).Decode(&body)
-
-	// data := Schedule{Slots: body.Slots, Matchs: body.Matchs, Players: body.Players}
-
-	// fmt.Printf("Melhor solução: %f\n", ga.HallOfFame[0].Fitness)
-	// // fmt.Printf("Melhor solução %2.2f (%d/%d) de acertos\n", (1.0-ga.HallOfFame[0].Fitness)*100, int((1.0-ga.HallOfFame[0].Fitness)*float64(len(body.Matchs))), len(body.Matchs))
-	// fmt.Println("Tempo total (segundos): ", time.Now().Sub(first).Seconds())
-
-	// slots := ga.HallOfFame[0].Genome.(Schedule).Genome
-
-	// for slotIdx := 0; slotIdx < len(slots); slotIdx++ {
-	// 	slot := data.Slots[slotIdx]
-	// 	matchID := slots[slotIdx]
-
-	// 	if matchID != -1 {
-
-	// 		fmt.Println(matchID, slot.ID)
-
-	// 		for _, match := range data.Matchs {
-
-	// 			if match.ID == matchID {
-
-	// 				player1, _ := FindPlayerByID(match.Player1, data.Players)
-	// 				player2, _ := FindPlayerByID(match.Player2, data.Players)
-
-	// 				if !Contains(player1.AbleSlots, slot.ID) || !Contains(player2.AbleSlots, slot.ID) {
-	// 					fmt.Println("Erro aqui")
-	// 				}
-
-	// 				break
-	// 			}
-	// 		}
-
-	// 	}
-	// }
-
-	// for index := 0; index < len(slots); index++ {
-
-	// 	matchID := slots[index]
-	// 	slot := data.Slots[index]
-
-	// 	if matchID != -1 {
-
-	// 		for _, matchId := range slots {
-
-	// 			found := false
-
-	// 			for _, match := range data.Matchs {
-	// 				if match.ID == matchId {
-
-	// 					player1, _ := FindPlayerByID(match.Player1, data.Players)
-	// 					player2, _ := FindPlayerByID(match.Player2, data.Players)
-
-	// 					if Contains(player1.AbleSlots, slot.ID) && Contains(player2.AbleSlots, slot.ID) {
-	// 						found := true
-	// 						break
-	// 					}
-
-	// 				}
-	// 			}
-
-	// 		}
-
-	// 	}
-
-	// }
-
-	// tmpSlots := make([]Slot, len(data.Slots))
-	// copy(tmpSlots, data.Slots)
-
-	// response := AllocateRequestResponse{Slots: tmpSlots}
-
-	// for index := 0; index < len(data.Slots); index++ {
-	// 	match, _ := FindMatchByID(slots[index], data.Matchs)
-
-	// 	response.Slots[index].Match = match
-	// }
-
-	// json.NewEncoder(w).Encode(response)
 }
 
 func main() {
