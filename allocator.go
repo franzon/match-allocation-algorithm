@@ -31,7 +31,7 @@ type Player struct {
 }
 
 type Match struct {
-	ID      int
+	ID      int    `json:"id"`
 	Player1 Player `json:"player1"`
 	Player2 Player `json:"player2"`
 }
@@ -200,6 +200,8 @@ func (data ScheduleData) GenomeFactory(rng *rand.Rand) eaopt.Genome {
 
 	// tmpPlayers := make([]Player, len(data.Players))
 	// copy(tmpPlayers, X.Players)
+
+	// todo: retornar erro se len(slot) < len(match)
 
 	rndGenome := make([]int, len(data.Slots))
 

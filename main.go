@@ -62,7 +62,7 @@ func RunGeneticAlgorithm(body RequestBody) (ResponseBody, error) {
 	// 	}}
 
 	gaConfig := eaopt.GAConfig{
-		EarlyStop: earlyStop, NPops: 24, PopSize: 80, HofSize: 1, NGenerations: 300, ParallelEval: true,
+		EarlyStop: earlyStop, NPops: 10, PopSize: 50, HofSize: 1, NGenerations: 500, ParallelEval: true,
 		Model: eaopt.ModGenerational{
 			Selector: eaopt.SelTournament{
 				NContestants: 3,
@@ -111,6 +111,9 @@ func RunGeneticAlgorithm(body RequestBody) (ResponseBody, error) {
 
 // GenerateAllocation Procura uma boa alocação das partidas
 func GenerateAllocation(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// timer := time.Now()
 

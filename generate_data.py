@@ -15,7 +15,7 @@ def generate_players(n, slots):
         p = {"id": i, "name": names.get_first_name(), "able_slots": []}
 
         for s in slots:
-            if random.random() < 0.3:
+            if random.random() < 0.5:
                 p["able_slots"].append(s["id"])
 
         if len(p["able_slots"]) == 0:
