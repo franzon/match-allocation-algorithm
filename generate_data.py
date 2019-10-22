@@ -30,19 +30,8 @@ def generate_matchs(players):
 
     matchs = []
 
-    tmp = players.copy()
-    i = 0
-
-    while len(tmp) > 0:
-        player1 = random.choice(tmp)
-        tmp.remove(player1)
-
-        player2 = random.choice(tmp)
-        tmp.remove(player2)
-
+    for i in range(len(players) // 2):
         matchs.append(
-            {"id": i, "player1": player1["id"], "player2": player2["id"]})
-
-        i += 1
+            {"id": i, "player1": players[i*2]["id"], "player2": players[i*2+1]["id"]})
 
     return matchs
