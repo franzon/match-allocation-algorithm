@@ -62,7 +62,7 @@ func RunGeneticAlgorithm(body RequestBody) (ResponseBody, error) {
 	// 	}}
 
 	gaConfig := eaopt.GAConfig{
-		EarlyStop: earlyStop, NPops: 24, PopSize: 80, HofSize: 1, NGenerations: 400, ParallelEval: true,
+		EarlyStop: earlyStop, NPops: 48, PopSize: 80, HofSize: 1, NGenerations: 500, ParallelEval: true,
 		Model: eaopt.ModGenerational{
 			Selector: eaopt.SelTournament{
 				NContestants: 3,
