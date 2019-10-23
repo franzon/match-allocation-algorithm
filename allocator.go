@@ -27,6 +27,7 @@ type Player struct {
 	ID        int      `json:"id"`
 	Name      string   `json:"name"`
 	AbleSlots []string `json:"able_slots"`
+	Class     string   `json:"class"`
 	Status    bool     `json:"status"`
 }
 
