@@ -12,21 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// -------------------- Request --------------------
-
-// // RequestSlot Representação do Slot na requisição
-// type RequestSlot struct {
-// 	ID          int    `json:"id"`
-// 	Description string `json:"description"`
-// }
-
-// // RequestPlayer Representação do Player na requisição
-// type RequestPlayer struct {
-// 	ID           int      `json:"id"`
-// 	Name         string   `json:"name"`
-// 	AbleSlotsIDs []string `json:"able_slots"`
-// }
-
 // RequestMatch Representação da Match na requisição
 type RequestMatch struct {
 	ID      int `json:"id"`
@@ -62,7 +47,7 @@ func RunGeneticAlgorithm(body RequestBody) (ResponseBody, error) {
 	// 	}}
 
 	gaConfig := eaopt.GAConfig{
-		EarlyStop: earlyStop, NPops: 48, PopSize: 80, HofSize: 1, NGenerations: 500, ParallelEval: true,
+		EarlyStop: earlyStop, NPops: 1, PopSize: 80, HofSize: 1, NGenerations: 500, ParallelEval: true,
 		Model: eaopt.ModGenerational{
 			Selector: eaopt.SelTournament{
 				NContestants: 3,

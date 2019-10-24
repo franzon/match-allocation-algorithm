@@ -12,14 +12,14 @@ def generate_players(n, slots):
     players = []
 
     for i in range(n):
-        p = {"id": i, "name": names.get_first_name(), "able_slots": []}
+        p = {"id": i, "name": names.get_first_name(), "unable_slots": []}
 
         for s in slots:
-            if random.random() < 0.5:
-                p["able_slots"].append(s["id"])
+            if random.random() < 0.2:
+                p["unable_slots"].append(s["id"])
 
-        if len(p["able_slots"]) == 0:
-            p["able_slots"].append(random.choice(slots)["id"])
+        if len(p["unable_slots"]) == 0:
+            p["unable_slots"].appepnd(random.choice(slots)["id"])
 
         players.append(p)
 
