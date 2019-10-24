@@ -12,18 +12,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// RequestMatch Representação da Match na requisição
-type RequestMatch struct {
-	ID      int `json:"id"`
-	Player1 int `json:"player1"`
-	Player2 int `json:"player2"`
-}
-
 // RequestBody Representação da requisição
 type RequestBody struct {
-	Slots   []Slot         `json:"slots"`
-	Players []Player       `json:"players"`
-	Matchs  []RequestMatch `json:"matchs"`
+	Slots  []Slot  `json:"slots"`
+	Matchs []Match `json:"matchs"`
 }
 
 // -------------------- Response --------------------
@@ -69,17 +61,7 @@ func RunGeneticAlgorithm(body RequestBody) (ResponseBody, error) {
 
 	// Dados necessários para calcular o fitness do cromossomo
 
-	// Popula os jogadores nas partidas
-	matchs := make([]Match, 0)
-
-	for _, match := range body.Matchs {
-		player1, _ := FindPlayerByID(match.Player1, body.Players)
-		player2, _ := FindPlayerByID(match.Player2, body.Players)
-
-		matchs = append(matchs, Match{ID: match.ID, Player1: player1, Player2: player2})
-	}
-
-	scheduleData := ScheduleData{Slots: body.Slots, Players: body.Players, Matchs: matchs}
+	scheduleData := ScheduleData{Slots: body.Slots, Matchs: body.Matchs}
 
 	// Inicia o algorítmo genético
 
